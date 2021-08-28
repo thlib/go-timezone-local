@@ -7,7 +7,7 @@ package main
 
 import (
     "fmt"
-    tz "github.com/thlib/go-local-timezone"
+    tz "github.com/thlib/go-timezone-local"
 )
 
 func main() {
