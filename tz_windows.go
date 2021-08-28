@@ -5,13 +5,11 @@ package timezone
 
 import (
 	"fmt"
+
 	"golang.org/x/sys/windows/registry"
-	"os"
-	"path"
-	"time"
 )
 
-const winTZtoIANA = map[string]string{
+var winTZtoIANA = map[string]string{
 	"AUS Central Standard Time":       "Australia/Darwin",
 	"AUS Eastern Standard Time":       "Australia/Sydney",
 	"Afghanistan Standard Time":       "Asia/Kabul",
@@ -153,13 +151,15 @@ const winTZtoIANA = map[string]string{
 	"Yukon Standard Time":             "America/Whitehorse",
 }
 
-func getKey(key, name string) (string, error) {
+func getKey(key, name string) (val string, err error) {
 	k, err := registry.OpenKey(registry.LOCAL_MACHINE, key, registry.QUERY_VALUE)
-	defer k.Close()
+	defer func() {
+		err = k.Close()
+	}()
 	if err != nil {
 		return "", err
 	}
-	val, _, err := k.GetStringValue(name)
+	val, _, err = k.GetStringValue(name)
 	if err != nil {
 		return "", err
 	}
@@ -169,6 +169,9 @@ func getKey(key, name string) (string, error) {
 // LocalTZ will run `/etc/localtime` and get the timezone from the resulting value `/usr/share/zoneinfo/America/New_York`
 func LocalTZ() (string, error) {
 	winTZName, err := getKey(`SYSTEM\CurrentControlSet\Control\TimeZoneInformation`, "TimeZoneKeyName")
+	if err != nil {
+		return "", err
+	}
 	if IANATZname, ok := winTZtoIANA[winTZName]; ok {
 		return IANATZname, nil
 	}
