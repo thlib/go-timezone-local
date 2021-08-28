@@ -6,12 +6,12 @@ Usage:
 package main
 
 import (
-	"fmt"
+    "fmt"
     tz "github.com/thlib/go-local-timezone"
 )
 
 func main() {
     val, _ := tz.RuntimeTz()
-	fmt.Println(val)
+    fmt.Println(val)
 }
 ```
