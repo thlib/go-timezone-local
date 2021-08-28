@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-    val, _ := tz.RuntimeTz()
+    val, _ := tz.RuntimeTZ()
     fmt.Println(val)
 }
 ```
