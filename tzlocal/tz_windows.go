@@ -2,8 +2,7 @@ package tzlocal
 
 import (
 	"fmt"
-
-	"golang.org/x/sys/windows/registry"
+	"os/exec"
 )
 
 var winTZtoIANA = map[string]string{
@@ -148,29 +147,17 @@ var winTZtoIANA = map[string]string{
 	"Yukon Standard Time":             "America/Whitehorse",
 }
 
-func getKey(key, name string) (val string, err error) {
-	k, err := registry.OpenKey(registry.LOCAL_MACHINE, key, registry.QUERY_VALUE)
-	defer func() {
-		err = k.Close()
-	}()
-	if err != nil {
-		return "", err
-	}
-	val, _, err = k.GetStringValue(name)
-	if err != nil {
-		return "", err
-	}
-	return val, err
-}
-
-// LocalTZ will run `/etc/localtime` and get the timezone from the resulting value `/usr/share/zoneinfo/America/New_York`
+// LocalTZ will run `tzutil /g` and map the windows timezone name back to the IANA standard
 func LocalTZ() (string, error) {
-	winTZName, err := getKey(`SYSTEM\CurrentControlSet\Control\TimeZoneInformation`, "TimeZoneKeyName")
+	cmd := exec.Command("tzutil", "/g")
+	winTZname, err := cmd.Output()
 	if err != nil {
 		return "", err
 	}
-	if IANATZname, ok := winTZtoIANA[winTZName]; ok {
-		return IANATZname, nil
+
+	if name, ok := WinTZtoIANA[string(winTZname)]; ok {
+		return name, nil
 	}
-	return "", fmt.Errorf("could not find IANA time zone name for %v", winTZName)
+
+	return "", fmt.Errorf("could not find IANA tz name for set time zone %s", winTZname)
 }
