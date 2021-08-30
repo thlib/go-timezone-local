@@ -1,4 +1,4 @@
-package timezone
+package tzlocal
 
 import (
 	"fmt"

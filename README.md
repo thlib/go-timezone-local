@@ -7,11 +7,11 @@ package main
 
 import (
     "fmt"
-    tz "github.com/thlib/go-timezone-local"
+    "github.com/thlib/go-timezone-local/tzlocal"
 )
 
 func main() {
-    val, _ := tz.RuntimeTZ()
+    val, _ := tzlocal.RuntimeTZ()
     fmt.Println(val)
 }
 ```

@@ -1,7 +1,7 @@
 //go:build !windows
 // +build !windows
 
-package timezone
+package tzlocal
 
 import (
 	"fmt"
