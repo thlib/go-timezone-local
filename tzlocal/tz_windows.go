@@ -3,9 +3,11 @@ package tzlocal
 import (
 	"fmt"
 	"os/exec"
+
+	"golang.org/x/sys/windows/registry"
 )
 
-var winTZtoIANA = map[string]string{
+var WinTZtoIANA = map[string]string{
 	"AUS Central Standard Time":       "Australia/Darwin",
 	"AUS Eastern Standard Time":       "Australia/Sydney",
 	"Afghanistan Standard Time":       "Asia/Kabul",
@@ -147,17 +149,51 @@ var winTZtoIANA = map[string]string{
 	"Yukon Standard Time":             "America/Whitehorse",
 }
 
-// LocalTZ will run `tzutil /g` and map the windows timezone name back to the IANA standard
+const tzKey = `SYSTEM\CurrentControlSet\Control\TimeZoneInformation`
+const tzKeyVal = "TimeZoneKeyName"
+
+// LocalTZ obtains the name of the time zone Windows is configured to use.
+// Returns the IANA standard name which corresponds to the windows-specific name.
 func LocalTZ() (string, error) {
+	var winTZname string
+	var errTzutil, errReg error
+
+	// try tzutil command first - if that it not available, try registry key
+	winTZname, errTzutil = localTZfromTzutil()
+	if errTzutil != nil {
+		winTZname, errReg = localTZfromReg()
+		if errReg != nil { // both methods failed, return both errors
+			return "", fmt.Errorf("failed to read time zone name with errors\n(1) %s\n(2) %s", errTzutil, errReg)
+		}
+	}
+
+	if name, ok := WinTZtoIANA[winTZname]; ok {
+		return name, nil
+	}
+	return "", fmt.Errorf("could not find IANA tz name for set time zone \"%s\"", winTZname)
+}
+
+// localTZfromTzutil executes command `tzutil /g` to get the name of the time zone Windows is configured to use.
+func localTZfromTzutil() (string, error) {
 	cmd := exec.Command("tzutil", "/g")
-	winTZname, err := cmd.Output()
+	data, err := cmd.Output()
 	if err != nil {
 		return "", err
 	}
+	return string(data), nil
+}
 
-	if name, ok := WinTZtoIANA[string(winTZname)]; ok {
-		return name, nil
+// localTZfromReg obtains the time zone Windows is configured to use from registry.
+func localTZfromReg() (string, error) {
+	k, err := registry.OpenKey(registry.LOCAL_MACHINE, tzKey, registry.QUERY_VALUE)
+	if err != nil {
+		return "", err
 	}
+	defer k.Close()
 
-	return "", fmt.Errorf("could not find IANA tz name for set time zone %s", winTZname)
+	winTZname, _, err := k.GetStringValue(tzKeyVal)
+	if err != nil {
+		return "", err
+	}
+	return winTZname, nil
 }
