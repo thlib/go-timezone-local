@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-adjusted from Lennart Regebro's tzlocal package for Python.
+taken from Lennart Regebro's tzlocal package (output adjusted).
 
 source: https://github.com/regebro/tzlocal/blob/master/update_windows_mappings.py
 """
