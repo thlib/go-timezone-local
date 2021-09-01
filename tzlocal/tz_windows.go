@@ -11,13 +11,12 @@ import (
 const tzKey = `SYSTEM\CurrentControlSet\Control\TimeZoneInformation`
 const tzKeyVal = "TimeZoneKeyName"
 
-// LocalTZ obtains the name of the time zone Windows is configured to use.
-// Returns the IANA standard name which corresponds to the windows-specific name.
+// LocalTZ obtains the name of the time zone Windows is configured to use. Returns the corresponding IANA standard name
 func LocalTZ() (string, error) {
 	var winTZname string
 	var errTzutil, errReg error
 
-	// try tzutil command first - if that it not available, try registry key
+	// try tzutil command first - if that is not available, try to read from registry
 	winTZname, errTzutil = localTZfromTzutil()
 	if errTzutil != nil {
 		winTZname, errReg = localTZfromReg()
