@@ -33,7 +33,7 @@ go run main.go
 
 It should print the go runtime timezone.
 
-For developers of github.com/thlib/go-timezone-local/tzlocal, updating the list of time zones in windows
+For contributors to update the list of time zones on windows
 -----
 
 Clone github.com/thlib/go-timezone-local  
