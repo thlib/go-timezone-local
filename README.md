@@ -13,6 +13,16 @@ localizing a date with obtained `loc` will cause
 ---
 
 ### Package Usage
+=======
+```
+go get github.com/thlib/go-timezone-local/tzlocal
+```
+
+See it in action:
+-----
+
+Open your project folder  
+Create a file `main.go`
 
 ```go
 package main
@@ -44,9 +54,30 @@ func main() {
 }
 ```
 
----
+Run the following commands:
+```
+go mod init example.com/yourpackage
+go mod vendor
+go run main.go
+```
+
+It should print the go runtime timezone.
+
+
+### For contributors to update the list of time zones on windows
+=======
+
+Clone github.com/thlib/go-timezone-local  
+Change directory to go-timezone-local  
+
+```
+cd go-timezone-local
+go generate ./...
+```
 
 ### Credits
-[colm.anseo](https://stackoverflow.com/users/1218512/colm-anseo) and [MrFuppes](https://stackoverflow.com/users/10197418/mrfuppes) for providing the following answers on Stackoverflow:  
+=======
+
+All credit goes to [colm.anseo](https://stackoverflow.com/users/1218512/colm-anseo) and [MrFuppes](https://stackoverflow.com/users/10197418/mrfuppes) for providing the following answers:  
 * https://stackoverflow.com/a/68938947/175071
 * https://stackoverflow.com/a/68966317/175071
