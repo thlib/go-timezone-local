@@ -1,5 +1,7 @@
 ## Get the full name of your local time zone (OS setting)
 
+Works on windows, linux and macos
+
 ### Why?
 built-in functionality sometimes won't suffice:
 ```go
