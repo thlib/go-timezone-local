@@ -31,7 +31,7 @@ go mod vendor
 go run main.go
 ```
 
-It should print your OS timezone.
+It should print the go runtime timezone.
 
 For developers of github.com/thlib/go-timezone-local/tzlocal, updating the list of time zones in windows
 -----
