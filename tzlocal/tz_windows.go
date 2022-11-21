@@ -4,7 +4,6 @@ package tzlocal
 
 import (
 	"fmt"
-	"os/exec"
 	"strings"
 
 	"golang.org/x/sys/windows/registry"
@@ -31,16 +30,6 @@ func LocalTZ() (string, error) {
 		return name, nil
 	}
 	return "", fmt.Errorf("could not find IANA tz name for set time zone \"%s\"", winTZname)
-}
-
-// localTZfromTzutil executes command `tzutil /g` to get the name of the time zone Windows is configured to use.
-func localTZfromTzutil() (string, error) {
-	cmd := exec.Command("tzutil", "/g")
-	data, err := cmd.Output()
-	if err != nil {
-		return "", err
-	}
-	return strings.TrimSpace(string(data)), nil
 }
 
 // localTZfromReg obtains the time zone Windows is configured to use from registry.
