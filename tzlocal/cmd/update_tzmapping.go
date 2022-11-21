@@ -18,6 +18,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	_, err = f.WriteString("//go:build windows\n// +build windows\n\n")
+	if err != nil {
+		panic(err)
+	}
 	_, err = f.WriteString("package tzlocal\n\n")
 	if err != nil {
 		panic(err)
