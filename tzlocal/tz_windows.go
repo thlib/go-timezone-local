@@ -29,6 +29,23 @@ func LocalTZ() (string, error) {
 	if name, ok := WinTZtoIANA[winTZname]; ok {
 		return name, nil
 	}
+	
+	// If the timezone is not found in the WinTZtoIANA map, check if the timezone string contains "_dstoff",
+	// which indicates that "Daylight Saving Time" adjustments for the timezone are disabled.
+	// Remove the "_dstoff" part from the timezone string and check in the map again.
+	// Refer: https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/tzutil#syntax
+	index := strings.Index(winTZname, "_dstoff")
+	if index != -1 {
+		// Remove "_dstoff" from the time zone string
+		winTZname = winTZname[:index]
+
+		// Get the IANA time zone for the updated time zone string.
+		if name, ok := tzlocal.WinTZtoIANA[winTZname]; ok {
+			return name, nil
+		}
+	}
+
+	
 	return "", fmt.Errorf("could not find IANA tz name for set time zone \"%s\"", winTZname)
 }
 
