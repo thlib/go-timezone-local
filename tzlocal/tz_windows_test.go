@@ -25,15 +25,8 @@ func TestMappings(t *testing.T) {
 }
 
 func TestLocalTZ(t *testing.T) {
-	s, err := localTZfromTzutil()
-	if err != nil {
-		t.Errorf("got unexpected error %v", err)
-	}
-	if s == "" {
-		t.Error("got unexpected empty result with no error")
-	}
 
-	s, err = localTZfromReg()
+	s, _, err := localTZfromReg()
 	if err != nil {
 		t.Errorf("got unexpected error %v", err)
 	}
