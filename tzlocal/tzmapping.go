@@ -6,7 +6,7 @@ package tzlocal
 
 // A lookup table, mapping Windows time zone names to IANA time zone names and vice versa.
 
-// Last created 2022-11-21T17:48:29Z
+// Last created 2024-06-25T15:10:28Z
 
 // WinTZtoIANA maps time zone names used by Windows to those used by IANA
 var WinTZtoIANA = map[string]string{
@@ -34,7 +34,7 @@ var WinTZtoIANA = map[string]string{
 	"Caucasus Standard Time": "Asia/Yerevan",
 	"Cen. Australia Standard Time": "Australia/Adelaide",
 	"Central America Standard Time": "America/Guatemala",
-	"Central Asia Standard Time": "Asia/Almaty",
+	"Central Asia Standard Time": "Asia/Bishkek",
 	"Central Brazilian Standard Time": "America/Cuiaba",
 	"Central Europe Standard Time": "Europe/Budapest",
 	"Central European Standard Time": "Europe/Warsaw",
@@ -80,7 +80,7 @@ var WinTZtoIANA = map[string]string{
 	"Montevideo Standard Time": "America/Montevideo",
 	"Morocco Standard Time": "Africa/Casablanca",
 	"Mountain Standard Time": "America/Denver",
-	"Mountain Standard Time (Mexico)": "America/Chihuahua",
+	"Mountain Standard Time (Mexico)": "America/Mazatlan",
 	"Myanmar Standard Time": "Asia/Rangoon",
 	"N. Central Asia Standard Time": "Asia/Novosibirsk",
 	"Namibia Standard Time": "Africa/Windhoek",
@@ -241,7 +241,8 @@ var IANAtoWinTZ = map[string]string{
     "America/Cayenne":"SA Eastern Standard Time",
     "America/Cayman":"SA Pacific Standard Time",
     "America/Chicago":"Central Standard Time",
-    "America/Chihuahua":"Mountain Standard Time (Mexico)",
+    "America/Chihuahua":"Central Standard Time (Mexico)",
+    "America/Ciudad_Juarez":"Mountain Standard Time",
     "America/Coral_Harbour":"SA Pacific Standard Time",
     "America/Cordoba":"Argentina Standard Time",
     "America/Costa_Rica":"Central America Standard Time",
@@ -319,7 +320,7 @@ var IANAtoWinTZ = map[string]string{
     "America/North_Dakota/Beulah":"Central Standard Time",
     "America/North_Dakota/Center":"Central Standard Time",
     "America/North_Dakota/New_Salem":"Central Standard Time",
-    "America/Ojinaga":"Mountain Standard Time",
+    "America/Ojinaga":"Central Standard Time",
     "America/Panama":"SA Pacific Standard Time",
     "America/Pangnirtung":"Eastern Standard Time",
     "America/Paramaribo":"SA Eastern Standard Time",
@@ -375,7 +376,7 @@ var IANAtoWinTZ = map[string]string{
     "Antarctica/Vostok":"Central Asia Standard Time",
     "Arctic/Longyearbyen":"W. Europe Standard Time",
     "Asia/Aden":"Arab Standard Time",
-    "Asia/Almaty":"Central Asia Standard Time",
+    "Asia/Almaty":"West Asia Standard Time",
     "Asia/Amman":"Jordan Standard Time",
     "Asia/Anadyr":"Russia Time Zone 11",
     "Asia/Aqtau":"West Asia Standard Time",
@@ -438,7 +439,7 @@ var IANAtoWinTZ = map[string]string{
     "Asia/Pontianak":"SE Asia Standard Time",
     "Asia/Pyongyang":"North Korea Standard Time",
     "Asia/Qatar":"Arab Standard Time",
-    "Asia/Qostanay":"Central Asia Standard Time",
+    "Asia/Qostanay":"West Asia Standard Time",
     "Asia/Qyzylorda":"Qyzylorda Standard Time",
     "Asia/Rangoon":"Myanmar Standard Time",
     "Asia/Riyadh":"Arab Standard Time",
