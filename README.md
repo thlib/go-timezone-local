@@ -7,7 +7,7 @@ built-in functionality sometimes won't suffice:
 ```go
     zone, _ := time.Now().Zone() // try to get my time zone...
     loc, _ := time.LoadLocation(zone)
-    fmt.Println(zone, loc) // prints e.g. CEST UTC -> obviously wrong!
+	fmt.Printf("%v = %v\n", zone, loc.String()) // prints e.g. "CEST = UTC" obviously wrong!
 ```
 localizing a date with obtained `loc` will cause
 > panic: time: missing Location in call to Date
