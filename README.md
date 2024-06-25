@@ -12,6 +12,11 @@ fmt.Printf("%v = %v\n", zone, loc.String()) // prints e.g. "CEST = UTC" obviousl
 localizing a date with obtained `loc` will cause
 > panic: time: missing Location in call to Date
 
+```
+tzname, _ := tzlocal.RuntimeTZ() // assuming error is handled
+fmt.Printf("Actual IANA name: %v\n", tzname) // Prints "Actual IANA name: Europe/Paris"
+```
+
 ---
 
 ### Package Usage
