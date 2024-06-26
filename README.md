@@ -9,16 +9,14 @@ zone, _ := time.Now().Zone() // try to get my time zone...
 loc, _ := time.LoadLocation(zone)
 fmt.Printf("%v = %v\n", zone, loc.String()) // prints e.g. "CEST = UTC" obviously wrong!
 ```
+localizing a date with obtained `loc` will cause an error because it's not in the IANA format.
+> panic: time: missing Location in call to Date
+
 While tzlocal gives the correct IANA name
 ```
 tzname, _ := tzlocal.RuntimeTZ() // assuming error is handled
 fmt.Printf("Actual IANA name: %v\n", tzname) // Prints "Actual IANA name: Europe/Paris"
 ```
-
-localizing a date with obtained `loc` will cause
-> panic: time: missing Location in call to Date
-
-
 
 ---
 
