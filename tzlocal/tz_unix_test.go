@@ -57,3 +57,13 @@ func Test_inferFromPath(t *testing.T) {
 		})
 	}
 }
+
+func TestRuntimeTZ(t *testing.T) {
+	got, err := RuntimeTZ()
+	if err != nil {
+		t.Errorf("RuntimeTZ failed with %v", err.Error())
+	}
+	if got == "" {
+		t.Error("RuntimeTZ returned empty timezone string")
+	}
+}
