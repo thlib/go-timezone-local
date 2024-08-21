@@ -5,9 +5,17 @@ Works on windows, linux and macos
 ### Why?
 built-in functionality sometimes won't suffice:
 ```go
-zone, _ := time.Now().Zone() // try to get my time zone...
-loc, _ := time.LoadLocation(zone)
-fmt.Printf("%v = %v\n", zone, loc.String()) // prints e.g. "CEST = UTC" obviously wrong!
+zone, _ := time.Now().Zone() // my time zone
+fmt.Println(zone) // e.g. "CEST"
+
+loc, err := time.LoadLocation(zone)
+if err != nil {
+    // the program panics here:
+    panic("fail: could not load location from zone")
+}
+
+// unreachable:
+fmt.Println("success: location loaded from zone")
 ```
 localizing a date with obtained `loc` will cause an error because it's not in the IANA format.
 > panic: time: missing Location in call to Date
