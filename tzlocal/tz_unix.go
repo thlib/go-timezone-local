@@ -46,7 +46,7 @@ func LocalTZ() (string, error) {
 		return name, err
 	}
 
-	p, err := os.Readlink(localZoneFile)
+	p, err := filepath.EvalSymlinks(localZoneFile)
 	if err != nil {
 		return name, err
 	}
