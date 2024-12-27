@@ -18,7 +18,7 @@ func inferFromPath(p string) (string, error) {
 
 	parts := strings.Split(p, string(filepath.Separator))
 	for i := range parts {
-		if parts[i] == "zoneinfo" {
+		if parts[i] == "zoneinfo" || parts[i] == "zoneinfo.default" {
 			parts = parts[i+1:]
 			break
 		}
