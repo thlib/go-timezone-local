@@ -39,6 +39,16 @@ func Test_inferFromPath(t *testing.T) {
 			file:    "/usr/share/zoneinfo/UTC",
 			wantErr: false,
 		},
+		{ // MacOS - /var/db location
+			name:    "Europe/Berlin",
+			file:    "/var/db/timezone/zoneinfo/Europe/Berlin",
+			wantErr: false,
+		},
+		{ // MacOS - Final symlink target for /usr/share/zoneinfo and /var/db/timezone/zoneinfo
+			name:    "Europe/Berlin",
+			file:    "/usr/share/zoneinfo.default/Europe/Berlin",
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
