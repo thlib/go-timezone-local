@@ -83,9 +83,14 @@ It should print the go runtime timezone.
 Clone github.com/thlib/go-timezone-local  
 Change directory to go-timezone-local  
 
-```
+```sh
 cd go-timezone-local
 go generate ./...
+```
+or
+```sh
+cd go-timezone-local
+go run tzlocal/cmd/update_tzmapping.go
 ```
 
 ### Credits

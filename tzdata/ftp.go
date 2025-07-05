@@ -125,9 +125,6 @@ func FTPDownload(target string) (bytes.Buffer, error) {
 	}
 	defer conn.Close()
 	r := bufio.NewReader(conn)
-	if err != nil {
-		return buf, err
-	}
 	resp, err := r.ReadString('\n')
 	if err != nil {
 		return buf, err

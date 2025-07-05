@@ -3,7 +3,7 @@ package tzdata
 import (
 	"encoding/xml"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
@@ -42,7 +42,7 @@ func DownloadWindowsZones() (SupplementalData, error) {
 		return data, fmt.Errorf("failed to download \"%v\", http error: %v", winZonesURL, resp.StatusCode)
 	}
 
-	bytes, err := ioutil.ReadAll(resp.Body)
+	bytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return data, err
 	}

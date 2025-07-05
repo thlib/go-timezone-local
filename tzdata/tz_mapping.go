@@ -20,11 +20,13 @@ func UpdateWindowsTZMapping(target io.Writer) error {
 	if err != nil {
 		return err
 	}
+	fmt.Printf("Downloaded legacy timezone data from %s\n", tzdataURL)
 
 	data, err := DownloadWindowsZones()
 	if err != nil {
 		return err
 	}
+	fmt.Printf("Downloaded windows timezone data from %s\n", winZonesURL)
 
 	win_tz := make(map[string]string)
 	tz_win := make(map[string]string)
