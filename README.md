@@ -98,3 +98,11 @@ go run tzlocal/cmd/update_tzmapping.go
 All credit goes to the various contributors, [colm.anseo](https://stackoverflow.com/users/1218512/colm-anseo) and [MrFuppes](https://stackoverflow.com/users/10197418/mrfuppes) for providing the following answers:  
 * https://stackoverflow.com/a/68938947/175071
 * https://stackoverflow.com/a/68966317/175071
+
+## License
+
+This project is **dual‑licensed**:  
+- **The Unlicense** (public domain). See [LICENSE](./LICENSE).  
+- **Apache License 2.0**. See [LICENSE-APACHE.txt](./LICENSE-APACHE.txt).  
+
+You may choose **either** license at your option.
