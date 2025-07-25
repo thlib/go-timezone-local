@@ -106,3 +106,6 @@ This project is **dual‑licensed**:
 - **Apache License 2.0**. See [LICENSE-APACHE.txt](./LICENSE-APACHE.txt).  
 
 You may choose **either** license at your option.
+
+### Third‑party licences
+>This repository depends on several third‑party Go packages, for example `golang.org/x/sys` that are distributed under the BSD 3‑Clause licence.
