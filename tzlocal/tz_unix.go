@@ -13,23 +13,14 @@ import (
 const localZoneFile = "/etc/localtime" // symlinked file - set by OS
 
 func inferFromPath(p string) (string, error) {
-	var name string
-	var err error
-
-	parts := strings.Split(p, string(filepath.Separator))
-	for i := range parts {
-		if parts[i] == "zoneinfo" || parts[i] == "zoneinfo.default" {
-			parts = parts[i+1:]
-			break
+	for _, base := range []string{"/zoneinfo/", "/zoneinfo.default/"} {
+		i := strings.LastIndex(p, base)
+		if i >= 0 {
+			return p[i+len(base):], nil
 		}
 	}
 
-	if len(parts) < 1 {
-		err = fmt.Errorf("cannot infer timezone name from path: %q", p)
-		return name, err
-	}
-
-	return filepath.Join(parts...), nil
+	return "", fmt.Errorf("cannot infer timezone name from path: %q", p)
 }
 
 // LocalTZ will run `/etc/localtime` and get the timezone from the resulting value `/usr/share/zoneinfo/America/New_York`
