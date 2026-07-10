@@ -111,19 +111,24 @@ go run main.go
 It should print the go runtime timezone.
 
 
-### For contributors to update the list of time zones on windows
+### For contributors to update the Windows time zone mapping
 
-Clone github.com/thlib/go-timezone-local  
-Change directory to go-timezone-local  
+The generator downloads the latest IANA legacy names and Unicode CLDR Windows
+zone mappings, then rewrites `tzlocal/tzmapping.go`. It therefore requires
+network access to `ftp.iana.org` and `raw.githubusercontent.com`.
+
+From the repository root, run:
 
 ```sh
-cd go-timezone-local
-go generate ./...
+go generate
 ```
-or
+
+If it reports `GOPROXY list is not the empty string, but contains no entries`, the
+configured `GOPROXY` is malformed. 
+To override it for this command in a POSIX shell or WSL, run:
+
 ```sh
-cd go-timezone-local
-go run tzlocal/cmd/update_tzmapping.go
+GOPROXY=https://proxy.golang.org,direct go generate
 ```
 
 ### Credits
