@@ -153,7 +153,6 @@ var WinTZtoIANA = map[string]string{
 
 // IANAtoWinTZ maps time zone names used by IANA to those used by Windows
 var IANAtoWinTZ = map[string]string{
-    "":"Central Standard Time (Mexico)",
     "Africa/Abidjan":"Greenwich Standard Time",
     "Africa/Accra":"Greenwich Standard Time",
     "Africa/Addis_Ababa":"E. Africa Standard Time",

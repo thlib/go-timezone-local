@@ -1,25 +1,23 @@
 package tzdata
 
 import (
-	"bufio"
 	"bytes"
 	"strings"
 )
 
-const tzdataURL = `ftp://ftp.iana.org/tz/tzdata-latest.tar.gz`
+const tzdataURL = `https://data.iana.org/time-zones/tzdata-latest.tar.gz`
 
 // DownloadOldNames fetches the list of old tz names and returns a mapping
 func DownloadOldNames() (map[string]string, error) {
 	var err error
 
-	buf, err := FTPDownload(tzdataURL)
+	buf, err := downloadHTTP(tzdataURL)
 	if err != nil {
 		return nil, err
 	}
 
 	var b bytes.Buffer
-	w := bufio.NewWriter(&b)
-	err = ExtractTarGz(&buf, w, "backward")
+	err = ExtractTarGz(&buf, &b, "backward")
 	if err != nil {
 		return nil, err
 	}

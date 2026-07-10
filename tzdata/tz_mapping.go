@@ -41,7 +41,10 @@ func UpdateWindowsTZMapping(target io.Writer) error {
 
 		// Making windows mapping
 		for _, m := range element.MapZone {
-			t := strings.Split(m.Type, " ")
+			t := strings.Fields(m.Type)
+			if len(t) == 0 || m.Other == "" {
+				continue
+			}
 			if m.Territory == "001" {
 				win_tz[m.Other] = t[0]
 			}
@@ -79,19 +82,18 @@ func UpdateWindowsTZMapping(target io.Writer) error {
 	out.WriteString("var WinTZtoIANA = map[string]string{\n")
 
 	for _, k := range win_tz_keys {
-		out.WriteString(fmt.Sprintf("\t\"%v\": \"%v\",\n", k, win_tz[k]))
+		out.WriteString(fmt.Sprintf("\t%q: %q,\n", k, win_tz[k]))
 	}
 	out.WriteString("}\n\n")
 	out.WriteString("// IANAtoWinTZ maps time zone names used by IANA to those used by Windows\n")
 	out.WriteString("var IANAtoWinTZ = map[string]string{\n")
 
 	for _, k := range tz_win_keys {
-		out.WriteString(fmt.Sprintf("    \"%v\":\"%v\",\n", k, tz_win[k]))
+		out.WriteString(fmt.Sprintf("\t%q: %q,\n", k, tz_win[k]))
 	}
 	out.WriteString("}\n")
 
 	// Write buffered code to target writer
-	target.Write(out.Bytes())
-
-	return nil
+	_, err = target.Write(out.Bytes())
+	return err
 }

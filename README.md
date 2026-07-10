@@ -115,7 +115,7 @@ It should print the go runtime timezone.
 
 The generator downloads the latest IANA legacy names and Unicode CLDR Windows
 zone mappings, then rewrites `tzlocal/tzmapping.go`. It therefore requires
-network access to `ftp.iana.org` and `raw.githubusercontent.com`.
+network access to `data.iana.org` and `raw.githubusercontent.com`.
 
 From the repository root, run:
 
