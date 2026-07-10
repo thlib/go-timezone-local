@@ -33,7 +33,40 @@ fmt.Printf("Actual IANA name: %v\n", tzname) // Prints "Actual IANA name: Europe
 go get github.com/thlib/go-timezone-local/tzlocal
 ```
 
-### See it in action:
+### Included example
+
+A runnable example is available in [`example/main.go`](./example/main.go). It prints the operating system, detected IANA time zone, and current local time.
+
+The example imports [`time/tzdata`](https://pkg.go.dev/time/tzdata), so the IANA time zone database is embedded in the executable. This is useful for standalone Windows builds where a time zone database may not otherwise be available.
+
+Run it from the repository root:
+
+```sh
+go run ./example
+```
+
+Build and run it on Linux:
+
+```sh
+go build -o bin/timezone-example-linux ./example
+./bin/timezone-example-linux
+```
+
+Cross-compile it for 64-bit Windows:
+
+```sh
+GOOS=windows GOARCH=amd64 go build -o bin/timezone-example-windows-amd64.exe ./example
+```
+
+Then run it from PowerShell on Windows:
+
+```powershell
+.\bin\timezone-example-windows-amd64.exe
+```
+
+The generated `bin/` directory is ignored by Git.
+
+### Use in your own program
 
 Open your project folder  
 Create a file `main.go`
