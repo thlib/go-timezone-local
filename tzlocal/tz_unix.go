@@ -23,26 +23,36 @@ func inferFromPath(p string) (string, error) {
 	return "", fmt.Errorf("cannot infer timezone name from path: %q", p)
 }
 
-// LocalTZ will run `/etc/localtime` and get the timezone from the resulting value `/usr/share/zoneinfo/America/New_York`
+func localTZ(localZoneFile string) (string, error) {
+	target, err := os.Readlink(localZoneFile)
+	if err != nil {
+		fi, statErr := os.Lstat(localZoneFile)
+		if statErr != nil {
+			return "", fmt.Errorf("failed to stat %q: %w", localZoneFile, statErr)
+		}
+		if fi.Mode()&os.ModeSymlink == 0 {
+			return "", fmt.Errorf("%q is not a symlink - cannot infer name", localZoneFile)
+		}
+		return "", err
+	}
+
+	if !filepath.IsAbs(target) {
+		dir, err := filepath.EvalSymlinks(filepath.Dir(localZoneFile))
+		if err != nil {
+			return "", err
+		}
+		target = filepath.Join(dir, target)
+	}
+
+	p, err := filepath.EvalSymlinks(target)
+	if err != nil {
+		return "", err
+	}
+
+	return inferFromPath(p)
+}
+
+// LocalTZ gets the timezone name by resolving the /etc/localtime symlink.
 func LocalTZ() (string, error) {
-	var name string
-	fi, err := os.Lstat(localZoneFile)
-	if err != nil {
-		err = fmt.Errorf("failed to stat %q: %w", localZoneFile, err)
-		return name, err
-	}
-
-	if (fi.Mode() & os.ModeSymlink) == 0 {
-		err = fmt.Errorf("%q is not a symlink - cannot infer name", localZoneFile)
-		return name, err
-	}
-
-	p, err := filepath.EvalSymlinks(localZoneFile)
-	if err != nil {
-		return name, err
-	}
-
-	// handles 1 & 2 part zone names
-	name, err = inferFromPath(p)
-	return name, err
+	return localTZ(localZoneFile)
 }
