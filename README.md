@@ -123,6 +123,34 @@ From the repository root, run:
 go generate
 ```
 
+Generation compares the actual key/value pairs in each table and leaves the file
+untouched when they match; dates and formatting do not count as changes. An update
+is blocked if either table loses any existing key or has less than 90% similarity.
+Similarity is the number of identical key/value pairs divided by the larger of
+the old and new table sizes, calculated separately for each table. Both tables
+must be nonempty, all IANA names must load, and references between tables must exist.
+A blocked update leaves the existing file intact and prints the reason.
+
+The [Time zone mappings workflow](.github/workflows/tzmapping.yml) checks upstream
+daily at 07:23 UTC and supports manual runs from the Actions tab on `main`. It
+tests the candidate on Linux, macOS, and Windows before committing the mapping
+directly to `main`, atomically pushing a new minor version tag, and publishing a
+GitHub release. For example, `v0.0.9` becomes `v0.1.0`; unchanged mappings produce
+no commit or new version. Failed runs open an issue assigned to `timohuovinen`,
+or update the existing open notification issue with the latest logs. A rerun
+retries a release if the validated commit and tag were already pushed.
+
+The workflow uses the built-in `GITHUB_TOKEN` with contents/issue write permissions;
+no extra secret is needed. Repository rules must permit its direct commits to
+`main` and version tags. If a rule blocks publication, the run fails and notifies
+the maintainer; it does not bypass the rule. GitHub may disable scheduled workflows
+in public repositories after 60 days without repository activity; re-enable the
+workflow in Actions if that happens. Delivery timing follows GitHub's scheduler.
+
+To approve an intentional removal or a larger upstream change, review and commit
+the mapping manually, run the tests, and create its release manually. The scheduled
+workflow has no switch to bypass its safeguards.
+
 If it reports `GOPROXY list is not the empty string, but contains no entries`, the
 configured `GOPROXY` is malformed. 
 To override it for this command in a POSIX shell or WSL, run:

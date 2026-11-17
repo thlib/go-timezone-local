@@ -1,0 +1,139 @@
+name: Time zone mappings
+
+on:
+  schedule:
+    - cron: '23 7 * * *'
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tzmapping-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    if: >-
+      github.repository == 'thlib/go-timezone-local' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      base: ${{ steps.base.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@v7
+        with:
+          go-version: stable
+      - id: base
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Generate and validate candidate
+        run: go generate
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tzmapping-candidate
+          path: tzlocal/tzmapping.go
+          if-no-files-found: error
+          retention-days: 7
+
+  verify:
+    needs: prepare
+    if: ${{ !cancelled() && (needs.prepare.result == 'success' || needs.prepare.result == 'skipped') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.prepare.outputs.base || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-go@v7
+        with:
+          go-version: stable
+      - uses: actions/download-artifact@v4
+        if: needs.prepare.result == 'success'
+        with:
+          name: tzmapping-candidate
+          path: tzlocal
+      - run: go test -count=1 ./...
+      - run: go vet ./...
+      - name: Test release safeguards with local Git fixtures
+        if: runner.os == 'Linux'
+        run: bash .github/scripts/test-release-tzmapping.sh
+
+  publish:
+    needs: [prepare, verify]
+    if: >-
+      needs.prepare.result == 'success' && needs.verify.result == 'success' &&
+      github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    # Serialize manual and scheduled publishers; never cancel a release in progress.
+    concurrency:
+      group: tzmapping-publish
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.prepare.outputs.base }}
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: tzmapping-candidate
+          path: tzlocal
+      - name: Commit to main and publish minor release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash .github/scripts/release-tzmapping.sh
+
+  notify:
+    needs: [prepare, verify, publish]
+    if: >-
+      always() && github.repository == 'thlib/go-timezone-local' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') &&
+      (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - name: Notify maintainer (one open issue)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          title='Automatic time zone mapping update needs attention'
+          issue=$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number // empty')
+          cat > "$RUNNER_TEMP/notification.md" <<EOF
+          @timohuovinen, the automatic mapping update did not complete. No rejected mapping is published.
+
+          Inspect the [workflow logs]($RUN_URL) for removed keys, similarity scores, test failures, or publishing errors.
+          A publishing error may occur after a validated commit/tag was pushed; rerun the workflow to retry its release.
+
+          Job results:
+          \`\`\`json
+          $RESULTS
+          \`\`\`
+
+          Close this issue after resolving the failure. Subsequent failures update this issue while it remains open.
+          EOF
+          if [ -n "$issue" ]; then
+            gh issue edit "$issue" --body-file "$RUNNER_TEMP/notification.md"
+          else
+            gh issue create --title "$title" --assignee timohuovinen --body-file "$RUNNER_TEMP/notification.md"
+          fi
