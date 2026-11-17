@@ -11,7 +11,6 @@ import (
 	"io"
 	"sort"
 	"strings"
-	"time"
 )
 
 func UpdateWindowsTZMapping(target io.Writer) error {
@@ -77,7 +76,6 @@ func UpdateWindowsTZMapping(target io.Writer) error {
 	// Generate the code
 	out := bytes.Buffer{}
 	out.WriteString("// A lookup table, mapping Windows time zone names to IANA time zone names and vice versa.\n\n")
-	out.WriteString(fmt.Sprintf("// Last created %v\n\n", time.Now().UTC().Format(time.RFC3339)))
 	out.WriteString("// WinTZtoIANA maps time zone names used by Windows to those used by IANA\n")
 	out.WriteString("var WinTZtoIANA = map[string]string{\n")
 
