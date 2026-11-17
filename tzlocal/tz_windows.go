@@ -58,26 +58,25 @@ func LocalTZ() (string, error) {
 }
 
 // localTZInfo obtains the Windows time zone name and whether daylight saving
-// time is disabled, falling back from the Windows API to tzutil and registry.
+// time is disabled, falling back from the Windows API to the registry.
 func localTZInfo() (string, bool, error) {
-	winTZname, dstOff, errDynamic := localTZfromDynamicTimeZoneInformation()
+	return localTZInfoFromSources(localTZfromDynamicTimeZoneInformation, localTZfromReg)
+}
+
+// localTZInfoFromSources keeps source selection testable without changing the
+// machine's time zone or requiring Windows API and registry failures.
+func localTZInfoFromSources(readDynamic, readRegistry func() (string, bool, error)) (string, bool, error) {
+	winTZname, dstOff, errDynamic := readDynamic()
 	if errDynamic == nil {
 		return winTZname, dstOff, nil
 	}
 
-	winTZname, errTzUtil := localTZfromTzutil()
-	if errTzUtil == nil {
-		const dstOffSuffix = "_dstoff"
-		dstOff = strings.HasSuffix(winTZname, dstOffSuffix)
-		return strings.TrimSuffix(winTZname, dstOffSuffix), dstOff, nil
-	}
-
-	winTZname, dstOff, errReg := localTZfromReg()
+	winTZname, dstOff, errReg := readRegistry()
 	if errReg == nil {
 		return winTZname, dstOff, nil
 	}
 
-	return "", false, fmt.Errorf("failed to read timezone from Windows API (%v), tzutil (%v), and registry (%v)", errDynamic, errTzUtil, errReg)
+	return "", false, fmt.Errorf("failed to read timezone from Windows API (%v) and registry (%v)", errDynamic, errReg)
 }
 
 // localTZfromReg obtains the time zone Windows is configured to use from registry.
