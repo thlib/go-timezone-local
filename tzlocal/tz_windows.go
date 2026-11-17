@@ -60,18 +60,12 @@ func LocalTZ() (string, error) {
 // localTZInfo obtains the Windows time zone name and whether daylight saving
 // time is disabled, falling back from the Windows API to the registry.
 func localTZInfo() (string, bool, error) {
-	return localTZInfoFromSources(localTZfromDynamicTimeZoneInformation, localTZfromReg)
-}
-
-// localTZInfoFromSources keeps source selection testable without changing the
-// machine's time zone or requiring Windows API and registry failures.
-func localTZInfoFromSources(readDynamic, readRegistry func() (string, bool, error)) (string, bool, error) {
-	winTZname, dstOff, errDynamic := readDynamic()
+	winTZname, dstOff, errDynamic := localTZfromDynamicTimeZoneInformation()
 	if errDynamic == nil {
 		return winTZname, dstOff, nil
 	}
 
-	winTZname, dstOff, errReg := readRegistry()
+	winTZname, dstOff, errReg := localTZfromReg()
 	if errReg == nil {
 		return winTZname, dstOff, nil
 	}
